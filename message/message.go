@@ -10,8 +10,10 @@ type Message interface {
 	Subject(subject string) Message
 	BodyHtml(html string) Message
 	BodyPlainText(plainText string) Message
-	DoNotTrackLinks() Message
-	DoNotTrackRead() Message
+	Substitution(key string, val interface{}) Message
+	Meta(key string, val interface{}) Message
+	TrackLinks() Message
+	TrackRead() Message
 	Option(key string, val interface{}) Message
 	UnsubscribeUrl(u string) Message
 	Json() (s string, err error)
@@ -23,18 +25,18 @@ type body struct {
 }
 
 type message struct {
-	Headers       map[string]string      `json:"headers"`
-	FromEmail     string                 `json:"from_email"`
-	FromName      string                 `json:"from_name,omitempty"`
-	ReplyToEmail  string                 `json:"reply_to,omitempty"`
-	Recipients    []Recipient            `json:"recipients"`
-	SubjectText   string                 `json:"subject"`
-	Body          *body                  `json:"body"`
-	Substitutions map[string]interface{} `json:"global_substitutions,omitempty"`
-	MetaData      map[string]interface{} `json:"metadata,omitempty"`
-	TrackLinks    int                    `json:"track_links,omitempty"`
-	TrackRead     int                    `json:"track_read,omitempty"`
-	Options       map[string]interface{} `json:"options,omitempty"`
+	Headers           map[string]string      `json:"headers,omitempty"`
+	FromEmail         string                 `json:"from_email,omitempty"`
+	FromName          string                 `json:"from_name,omitempty"`
+	ReplyToEmail      string                 `json:"reply_to,omitempty"`
+	Recipients        []Recipient            `json:"recipients,omitempty"`
+	SubjectText       string                 `json:"subject,omitempty"`
+	Body              *body                  `json:"body,omitempty"`
+	Substitutions     map[string]interface{} `json:"global_substitutions,omitempty"`
+	MetaData          map[string]interface{} `json:"metadata,omitempty"`
+	TrackLinksEnabled int                    `json:"track_links,omitempty"`
+	TrackReadEnabled  int                    `json:"track_read,omitempty"`
+	Options           map[string]interface{} `json:"options,omitempty"`
 }
 
 func (m *message) Header(key, val string) Message {
@@ -67,12 +69,22 @@ func (m *message) Subject(subject string) Message {
 }
 
 func (m *message) BodyHtml(html string) Message {
+	if m.Body == nil {
+		m.Body = &body{}
+	}
+
 	m.Body.Html = html
+
 	return m
 }
 
 func (m *message) BodyPlainText(plainText string) Message {
+	if m.Body == nil {
+		m.Body = &body{}
+	}
+
 	m.Body.PlainText = plainText
+
 	return m
 }
 
@@ -86,13 +98,13 @@ func (m *message) Meta(key string, val interface{}) Message {
 	return m
 }
 
-func (m *message) DoNotTrackLinks() Message {
-	m.TrackLinks = 0
+func (m *message) TrackLinks() Message {
+	m.TrackLinksEnabled = 1
 	return m
 }
 
-func (m *message) DoNotTrackRead() Message {
-	m.TrackRead = 0
+func (m *message) TrackRead() Message {
+	m.TrackReadEnabled = 1
 	return m
 }
 
@@ -119,11 +131,8 @@ func (m *message) Json() (s string, err error) {
 func NewMessage() Message {
 	return &message{
 		Headers:       map[string]string{},
-		Body:          &body{},
 		Substitutions: map[string]interface{}{},
 		MetaData:      map[string]interface{}{},
-		TrackLinks:    1,
-		TrackRead:     1,
 		Options:       map[string]interface{}{},
 	}
 }

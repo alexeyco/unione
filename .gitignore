@@ -17,7 +17,6 @@ vendor/
 ### JetBrains ###
 .idea/
 
-
 # Dev tools
 Dockerfile
 docker-compose.yml
