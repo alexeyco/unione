@@ -12,10 +12,14 @@ import (
 )
 
 const (
-	Endpoint        = "https://one.unisender.com"
+	// Endpoint Unione API endpoint.
+	Endpoint = "https://one.unisender.com"
+
+	// DefaultLanguage default API language.
 	DefaultLanguage = "en"
 )
 
+// Client Unione API client interface.
 type Client interface {
 	// LanguageEn sets API response language to English (default).
 	LanguageEn() Client
@@ -110,6 +114,7 @@ func (c *client) post(resource, key string, data interface{}) (response *Respons
 	return
 }
 
+// New returns new Unione API client.
 func New(userName, apiKey string) Client {
 	return &client{
 		userName: userName,

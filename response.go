@@ -1,6 +1,6 @@
 package unione
 
-// Response
+// Response Unione API response object.
 type Response struct {
 	// Status specifies if the request was successful.
 	Status string `json:"status"`

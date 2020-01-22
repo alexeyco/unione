@@ -1,5 +1,6 @@
 package message
 
+// Message email message interface.
 type Message interface {
 	// Header sets custom email header.
 	Header(key, val string) Message

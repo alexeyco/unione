@@ -1,5 +1,6 @@
 package message
 
+// Recipient email recipient interface.
 type Recipient interface {
 	// Name sets recipient name.
 	Name(name string) Recipient
