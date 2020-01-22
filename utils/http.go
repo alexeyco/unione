@@ -6,6 +6,7 @@ import (
 	"net/http"
 )
 
+// RoundTripHandler handler for test http client.
 type RoundTripHandler func(*http.Request) (*http.Response, error)
 
 type roundTripper struct {
@@ -24,6 +25,7 @@ func (r *roundTripper) RoundTrip(req *http.Request) (res *http.Response, err err
 	return
 }
 
+// NewHttpClient returns http test client.
 func NewHttpClient(h RoundTripHandler) (client *http.Client) {
 	client = http.DefaultClient
 	client.Transport = &roundTripper{

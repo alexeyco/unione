@@ -1,18 +1,47 @@
 package message
 
 type Message interface {
+	// Header sets custom email header.
 	Header(key, val string) Message
+
+	// From sets sender's contact.
 	From(email string, name ...string) Message
+
+	// ReplyTo sets email Reply-To header.
 	ReplyTo(email string) Message
+
+	// To sets email recipients.
 	To(recipients ...Recipient) Message
+
+	// Subject sets email subject.
 	Subject(subject string) Message
+
+	// BodyHtml sets email html body part.
 	BodyHtml(html string) Message
+
+	// BodyPlainText sets email plain text body part.
 	BodyPlainText(plainText string) Message
+
+	// Substitution passes the substitution to user.
 	Substitution(key string, val interface{}) Message
+
+	// Meta sets metadata value. Used for webhooks.
+	//
+	// See: https://one.unisender.com/en/docs/page/Webhook.
 	Meta(key string, val interface{}) Message
+
+	// TrackLinks enables email links tracking.
 	TrackLinks() Message
+
+	// TrackRead enables email read tracking.
 	TrackRead() Message
+
+	// Option sets custom email option.
 	Option(key string, val interface{}) Message
+
+	// UnsubscribeUrl sets custom unsubscribe link.
+	//
+	// See: https://one.unisender.com/en/docs/page/send#unsub
 	UnsubscribeUrl(u string) Message
 }
 
@@ -114,6 +143,7 @@ func (m *message) UnsubscribeUrl(u string) Message {
 	return m.Option("unsubscribe_url", u)
 }
 
+// NewMessage returns new message object.
 func NewMessage() Message {
 	return &message{
 		Headers:       map[string]string{},

@@ -1,8 +1,13 @@
 package message
 
 type Recipient interface {
+	// Name sets recipient name.
 	Name(name string) Recipient
+
+	// Substitution sets user substitution value.
 	Substitution(key string, val interface{}) Recipient
+
+	// Meta sets user meta param.
 	Meta(key string, val interface{}) Recipient
 }
 
@@ -26,6 +31,7 @@ func (r *recipient) Meta(key string, val interface{}) Recipient {
 	return r
 }
 
+// NewRecipient returns new recipient object.
 func NewRecipient(email string) Recipient {
 	return &recipient{
 		Email:         email,
