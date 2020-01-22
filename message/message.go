@@ -1,7 +1,5 @@
 package message
 
-import "encoding/json"
-
 type Message interface {
 	Header(key, val string) Message
 	From(email string, name ...string) Message
@@ -16,7 +14,6 @@ type Message interface {
 	TrackRead() Message
 	Option(key string, val interface{}) Message
 	UnsubscribeUrl(u string) Message
-	Json() (s string, err error)
 }
 
 type body struct {
@@ -115,17 +112,6 @@ func (m *message) Option(key string, val interface{}) Message {
 
 func (m *message) UnsubscribeUrl(u string) Message {
 	return m.Option("unsubscribe_url", u)
-}
-
-func (m *message) Json() (s string, err error) {
-	var b []byte
-	if b, err = json.Marshal(m); err != nil {
-		return
-	}
-
-	s = string(b)
-
-	return
 }
 
 func NewMessage() Message {
