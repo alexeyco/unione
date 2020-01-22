@@ -8,6 +8,37 @@
 Send transactional emails with [one.unisender.com](https://one.unisender.com).
 Examples and documentation available on [godoc](https://godoc.org/github.com/alexeyco/unione).
 
+# Usage
+## Send email
+
+```go
+package main
+
+import (
+    "log"
+
+    "github.com/alexeyco/unione"
+    "github.com/alexeyco/unione/message"
+)
+
+func main() {
+	recipient := message.NewRecipient("recipient@example.com").
+		Name("John Doe")
+
+	msg := message.NewMessage().
+		From("site@example.com", "My site").
+		To(recipient).
+		Subject("Awesome news, buddy").
+		BodyPlainText("Return to my site and enjoy")
+
+	client := unione.New("username", "api-key")
+
+	if err := client.Send(msg); err != nil {
+		log.Fatalln(err)
+	}
+}
+```
+
 ## License
 ```
 MIT License
