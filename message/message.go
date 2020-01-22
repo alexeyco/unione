@@ -12,6 +12,7 @@ type Message interface {
 	BodyPlainText(plainText string) Message
 	DoNotTrackLinks() Message
 	DoNotTrackRead() Message
+	Option(key string, val interface{}) Message
 	UnsubscribeUrl(u string) Message
 	Json() (s string, err error)
 }
@@ -95,9 +96,13 @@ func (m *message) DoNotTrackRead() Message {
 	return m
 }
 
-func (m *message) UnsubscribeUrl(u string) Message {
-	m.Options["unsubscribe_url"] = u
+func (m *message) Option(key string, val interface{}) Message {
+	m.Options[key] = val
 	return m
+}
+
+func (m *message) UnsubscribeUrl(u string) Message {
+	return m.Option("unsubscribe_url", u)
 }
 
 func (m *message) Json() (s string, err error) {
