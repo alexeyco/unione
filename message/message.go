@@ -23,6 +23,12 @@ type Message interface {
 	// BodyPlainText sets email plain text body part.
 	BodyPlainText(plainText string) Message
 
+	// Attach attaches file to message.
+	Attach(fileName string) (err error)
+
+	// InlineAttach attaches file inline.
+	InlineAttach(fileName, name string) (err error)
+
 	// Substitution passes the substitution to user.
 	Substitution(key string, val interface{}) Message
 
@@ -59,6 +65,8 @@ type message struct {
 	Recipients        []Recipient            `json:"recipients,omitempty"`
 	SubjectText       string                 `json:"subject,omitempty"`
 	Body              *body                  `json:"body,omitempty"`
+	Attachments       []*attachment          `json:"attachments,omitempty"`
+	InlineAttachments []*attachment          `json:"inline_attachments,omitempty"`
 	Substitutions     map[string]interface{} `json:"global_substitutions,omitempty"`
 	MetaData          map[string]interface{} `json:"metadata,omitempty"`
 	TrackLinksEnabled int                    `json:"track_links,omitempty"`
@@ -113,6 +121,28 @@ func (m *message) BodyPlainText(plainText string) Message {
 	m.Body.PlainText = plainText
 
 	return m
+}
+
+func (m *message) Attach(fileName string) (err error) {
+	var a *attachment
+	if a, err = newAttachment(fileName); err != nil {
+		return
+	}
+
+	m.Attachments = append(m.Attachments, a)
+
+	return
+}
+
+func (m *message) InlineAttach(fileName, name string) (err error) {
+	var a *attachment
+	if a, err = newAttachment(fileName, name); err != nil {
+		return
+	}
+
+	m.Attachments = append(m.Attachments, a)
+
+	return
 }
 
 func (m *message) Substitution(key string, val interface{}) Message {
