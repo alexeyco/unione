@@ -7,21 +7,21 @@ import (
 	"github.com/alexeyco/unione/message"
 )
 
-const fileName = "attachment_test.jpg"
+const attachmentFileName = "attachment_test.jpg"
 
 func TestNewAttachment(t *testing.T) {
-	attachment, err := message.NewAttachment(fileName)
+	attachment, err := message.NewAttachment(attachmentFileName)
 	if err != nil {
 		t.Fatalf(`Error should be nil, "%s" given`, err)
 	}
 
-	expectedName := filepath.Base(fileName)
+	expectedName := filepath.Base(attachmentFileName)
 	if expectedName != attachment.Name {
 		t.Fatalf(`Attachment filename should be "%s", "%s" given`, expectedName, attachment.Name)
 	}
 
 	custimFileName := "customFileName"
-	attachment, err = message.NewAttachment(fileName, custimFileName)
+	attachment, err = message.NewAttachment(attachmentFileName, custimFileName)
 	if err != nil {
 		t.Fatalf(`Error should be nil, "%s" given`, err)
 	}

@@ -1,6 +1,8 @@
 package message_test
 
 import (
+	"encoding/base64"
+	"io/ioutil"
 	"testing"
 
 	"github.com/alexeyco/unione/message"
@@ -98,6 +100,40 @@ func TestMessage_BodyPlainText(t *testing.T) {
 	utils.JsonIsEqual(t, expectedJson, givenJson)
 }
 
+func TestMessage_Attach(t *testing.T) {
+	msg := message.NewMessage()
+	if err := msg.Attach(attachmentFileName); err != nil {
+		t.Errorf(`Error should be nil, "%s" given`, err)
+	}
+
+	givenJson, err := utils.ToJson(msg)
+	if err != nil {
+		t.Errorf(`Error should be nil, "%s" given`, err)
+	}
+
+	content := attachmentContent(t)
+
+	expectedJson := `{"attachments":[{"type":"image/jpeg","name":"attachment_test.jpg","content":"` + content + `"}]}`
+	utils.JsonIsEqual(t, expectedJson, givenJson)
+}
+
+func TestMessage_InlineAttach(t *testing.T) {
+	msg := message.NewMessage()
+	if err := msg.InlineAttach(attachmentFileName, "foobar"); err != nil {
+		t.Errorf(`Error should be nil, "%s" given`, err)
+	}
+
+	givenJson, err := utils.ToJson(msg)
+	if err != nil {
+		t.Errorf(`Error should be nil, "%s" given`, err)
+	}
+
+	content := attachmentContent(t)
+
+	expectedJson := `{"attachments":[{"type":"image/jpeg","name":"foobar","content":"` + content + `"}]}`
+	utils.JsonIsEqual(t, expectedJson, givenJson)
+}
+
 func TestMessage_Substitution(t *testing.T) {
 	msg := message.NewMessage().
 		Substitution("foo", "bar")
@@ -174,4 +210,14 @@ func TestMessage_UnsubscribeUrl(t *testing.T) {
 
 	expectedJson := `{"options":{"unsubscribe_url":"https://foo.bar/baz"}}`
 	utils.JsonIsEqual(t, expectedJson, givenJson)
+}
+
+func attachmentContent(t *testing.T) string {
+	var b []byte
+	var err error
+	if b, err = ioutil.ReadFile(attachmentFileName); err != nil {
+		t.Fatalf(`Error should be nil, "%s" given`, err)
+	}
+
+	return base64.StdEncoding.EncodeToString(b)
 }
