@@ -9,13 +9,18 @@ import (
 
 const defaultMimeType = "application/octet-stream"
 
-type attachment struct {
-	Type    string `json:"type"`
-	Name    string `json:"name"`
+// Attachment object.
+type Attachment struct {
+	// Type content type.
+	Type string `json:"type"`
+	// Name attachment name.
+	Name string `json:"name"`
+	// Content base64-encoded file content.
 	Content string `json:"content"`
 }
 
-func newAttachment(fileName string, n ...string) (a *attachment, err error) {
+// NewAttachment returns Attachment by file name.
+func NewAttachment(fileName string, n ...string) (a *Attachment, err error) {
 	ext := filepath.Ext(fileName)
 
 	mimeType := mime.TypeByExtension(ext)
@@ -35,7 +40,7 @@ func newAttachment(fileName string, n ...string) (a *attachment, err error) {
 		return
 	}
 
-	a = &attachment{
+	a = &Attachment{
 		Type:    mimeType,
 		Name:    name,
 		Content: base64.StdEncoding.EncodeToString(b),
