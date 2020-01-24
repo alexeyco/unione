@@ -19,6 +19,16 @@ func TestNewAttachment(t *testing.T) {
 	if expectedName != attachment.Name {
 		t.Fatalf(`Attachment filename should be "%s", "%s" given`, expectedName, attachment.Name)
 	}
+
+	custimFileName := "customFileName"
+	attachment, err = message.NewAttachment(fileName, custimFileName)
+	if err != nil {
+		t.Fatalf(`Error should be nil, "%s" given`, err)
+	}
+
+	if custimFileName != attachment.Name {
+		t.Fatalf(`Attachment filename should be "%s", "%s" given`, expectedName, attachment.Name)
+	}
 }
 
 func TestNewAttachment_Error(t *testing.T) {
