@@ -21,7 +21,7 @@ func TestClient_LanguageRu(t *testing.T) {
 
 func TestClient_Send(t *testing.T) {
 	var givenJson string
-	client := utils.NewHttpClient(func(req *http.Request) (res *http.Response, err error) {
+	client := utils.NewTestHttpClient(func(req *http.Request) (res *http.Response, err error) {
 		b, err := ioutil.ReadAll(req.Body)
 		if err != nil {
 			t.Fatalf(`Error should be nil, "%s" given`, err)

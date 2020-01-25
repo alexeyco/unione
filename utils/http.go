@@ -25,8 +25,8 @@ func (r *roundTripper) RoundTrip(req *http.Request) (res *http.Response, err err
 	return
 }
 
-// NewHttpClient returns http test client.
-func NewHttpClient(h RoundTripHandler) (client *http.Client) {
+// NewTestHttpClient returns http test client.
+func NewTestHttpClient(h RoundTripHandler) (client *http.Client) {
 	client = http.DefaultClient
 	client.Transport = &roundTripper{
 		handler: h,
