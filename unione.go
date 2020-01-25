@@ -33,7 +33,7 @@ type Client interface {
 	// Send sends transactional email to recipients.
 	//
 	// See: https://one.unisender.com/en/docs/page/send
-	Send(m message.Message) (err error)
+	Send(m message.Message) (success []string, failed map[string]error, err error)
 }
 
 type client struct {
@@ -56,10 +56,14 @@ func (c *client) Client(client *http.Client) Client {
 	return c
 }
 
-func (c *client) Send(m message.Message) (err error) {
-	if _, err = c.post("transactional/api/v1/email/send.json", "message", m); err != nil {
+func (c *client) Send(m message.Message) (success []string, failed map[string]error, err error) {
+	var res *Response
+	if res, err = c.post("transactional/api/v1/email/send.json", "message", m); err != nil {
 		return
 	}
+
+	success = res.Emails
+	failed = mapErrors(res.FailedEmails)
 
 	return
 }
@@ -112,6 +116,15 @@ func (c *client) post(resource, key string, data interface{}) (response *Respons
 	}
 
 	return
+}
+
+func mapErrors(src map[string]string) map[string]error {
+	errs := map[string]error{}
+	for email, e := range src {
+		errs[email] = errors.New(e)
+	}
+
+	return errs
 }
 
 // New returns new Unione API client.
